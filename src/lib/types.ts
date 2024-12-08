@@ -4,7 +4,7 @@ export type Board = CellValue[];
 export type GameStatus = 'playing' | 'won' | 'draw';
 
 export interface GameState {
-  board: Board;
+  boards: Board[];
   currentPlayer: Player;
   winner: Player | null;
   gameStatus: GameStatus;

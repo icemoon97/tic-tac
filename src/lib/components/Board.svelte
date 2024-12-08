@@ -1,27 +1,25 @@
 <script lang="ts">
-    import BoardSquare from './BoardSquare.svelte';
     import { gameManager } from '../gameLogic.svelte';
+    import SubBoard from './SubBoard.svelte';
 </script>
 
-<div class="board">
-    {#each gameManager.board as value, i}
-        <BoardSquare
-            {value}
-            position={i}
-            onSquareClick={() => {
-                console.log("clicked " + i);
-                gameManager.move(i);
+<div class="super-board">
+    {#each gameManager.boards as subBoard, i}
+        <SubBoard
+            board={subBoard}
+            onSquareClick={(pos) => {
+                console.log(`move: ${i}, ${pos}`);
+                gameManager.move(i, pos);
             }}
-            isWinning={gameManager.winningSquares.includes(i)}
         />
     {/each}
 </div>
 
 <style>
-    .board {
+    .super-board {
         display: grid;
-        grid-template-columns: repeat(3, 100px);
-        gap: 4px;
-        margin: 20px auto;
+        grid-template-columns: repeat(3, auto);
+        width: fit-content;
+        gap: 25px;
     }
 </style>

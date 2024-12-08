@@ -23,6 +23,10 @@
         align-items: center;
         gap: 10px;
     }
+    
+    span {
+        font-size: large;
+    }
 
     button {
         width: 250px;

@@ -3,21 +3,17 @@
 
     interface Props {
         value: CellValue;
-        position: number;
-        onSquareClick: (position: number) => void;
-        isWinning: boolean;
+        onSquareClick: () => void;
     }
 
     let {
         value,
-        position,
-        onSquareClick,
-        isWinning
+        onSquareClick
     }: Props = $props();
     
     const handleClick = () => {
         if (!value) {
-            onSquareClick(position);
+            onSquareClick();
         }
     };
 </script>
@@ -27,15 +23,14 @@
     onclick={handleClick}
     disabled={value !== null}
     data-value={value}
-    data-is-winning={isWinning}
 >
     {value || ''}
 </button>
 
 <style>
     .square {
-        width: 100px;
-        height: 100px;
+        width: 60px;
+        height: 60px;
         border: 2px solid #333;
         font-size: 2.5rem;
         font-weight: bold;
@@ -60,7 +55,7 @@
         color: #F44336;
     }
 
-    .square[data-is-winning=true] {
+    /* .square[data-is-winning=true] {
         background: rgb(213, 255, 150);
-    }
+    } */
 </style>

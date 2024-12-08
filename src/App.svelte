@@ -4,7 +4,7 @@
 </script>
 
 <main>
-  <h1>bad tic tac toe</h1>
+  <h1>bad (tic tac toe)<sup>2</sup></h1>
   <div class="center-col">
     <Board />
     <Controls />
@@ -13,19 +13,20 @@
 
 <style>
   main {
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding-top: 20px;
     text-align: center;
   }
 
   h1 {
     color: #333;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   .center-col {
     display: flex;
     flex-direction: column;
+    align-items: center;
   }
 </style>
