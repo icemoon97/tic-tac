@@ -1,4 +1,4 @@
-import type { Board, GameState, GameStatus, Player } from './types';
+import type { Board, GameResult, GameState, GameStatus, Player } from './types';
 
 const WINNING_COMBINATIONS = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
@@ -31,23 +31,56 @@ const initialGameState = (): GameState => {
     return {
         boards: Array(9).fill(Array(9).fill(null)),
         currentPlayer: 'X',
-        winner: null,
-        gameStatus: 'playing'
+        result: ['playing', null]
+        // winner: null,
+        // gameStatus: 'playing'
     };
   }
 
 class GameManager {
     private state: GameState = $state(initialGameState());
+    private boardResults = $derived(this.checkSubBoards(this.state.boards));
     // public winningSquares: number[] = $derived(countWinningSquares(this.state.board));
 
     public move(board: number, pos: number): void {
+        if (this.getBoard(board)[pos] || this.status !== 'playing') {
+            return;
+        }
+
         this.getBoard(board)[pos] = this.state.currentPlayer;
+
+        // check win states of sub boards
+        // check win state of overall board
+        // check draw (all sub boards resolved)
+
+        // const boardResults = this.checkSubBoards();
+
 
         this.state.currentPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
     }
 
+    private checkSubBoards(boards: Board[]): GameResult[] {
+        return boards.map(board => {
+            // check for win
+            for (const [a, b, c] of WINNING_COMBINATIONS) {
+                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+                    return ['won', board[a] as Player];
+                }
+            }
+            // check for draw
+            if (board.every(cell => cell !== null)) {
+                return ['draw', null];
+            }
+            return ['playing', null];
+        })
+    }
+
     public getBoard(i: number): Board {
         return this.state.boards[i];
+    }
+
+    public getBoardResult(i: number): GameResult {
+        return this.boardResults[i];
     }
 
     get boards(): Board[] {
@@ -59,11 +92,13 @@ class GameManager {
     }
 
     get winner(): Player | null {
-        return this.state.winner;
+        const [_, winner] = this.state.result;
+        return winner;
     }
 
-    get gameStatus(): GameStatus {
-        return this.state.gameStatus;
+    get status(): GameStatus {
+        const [status, _] = this.state.result;
+        return status;
     }
 
     // public move(pos: number): void {

@@ -7,6 +7,7 @@
     {#each gameManager.boards as subBoard, i}
         <SubBoard
             board={subBoard}
+            gameResult={gameManager.getBoardResult(i)}
             onSquareClick={(pos) => {
                 console.log(`move: ${i}, ${pos}`);
                 gameManager.move(i, pos);

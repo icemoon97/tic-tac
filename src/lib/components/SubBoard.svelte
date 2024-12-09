@@ -1,14 +1,16 @@
 <script lang="ts">
-    import type { Board } from '../types';
+    import type { Board, GameResult } from '../types';
     import BoardSquare from './BoardSquare.svelte';
 
     interface Props {
         board: Board;
+        gameResult: GameResult;
         onSquareClick: (position: number) => void;
     }
 
     let { 
         board,
+        gameResult,
         onSquareClick
     }: Props = $props();
 </script>
@@ -17,6 +19,7 @@
     {#each board as value, i}
         <BoardSquare
             {value}
+            {gameResult}
             onSquareClick={() => onSquareClick(i)}
         />
     {/each}
