@@ -31,20 +31,6 @@
         return status === 'draw' ? COLORS.DRAW : COLORS.DEFAULT;
     };
 
-    // const computeColor = (result: GameResult): string => {
-    //     const [status, winner] = result;
-    //     if (status === 'won') {
-    //         if (winner === 'X') {
-    //             return "#65b2f0";
-    //         } else {
-    //             return "#ed837b";
-    //         }
-    //     } else if (status === 'draw') {
-    //         return "#b5b5b5";
-    //     } 
-    //     return "#ffffff";
-    // }
-
     let bgColor = $derived(computeColor(boardResult));
     let moveAllowed = $derived(isOpen && value === null && boardResult[0] === 'playing');
     
@@ -90,8 +76,8 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         background: yellow;
         border-radius: 20%;
         animation: glow 1.5s ease-in-out infinite;
@@ -101,11 +87,11 @@
 
     @keyframes glow {
         0%, 100% {
-            opacity: 0.4;
+            opacity: 0.5;
             transform: translate(-50%, -50%) scale(0.8);
         }
         50% {
-            opacity: 0.7;
+            opacity: 0.8;
             transform: translate(-50%, -50%) scale(1);
         }
     }

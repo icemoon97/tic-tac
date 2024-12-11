@@ -55,7 +55,7 @@ class GameManager {
     private state: GameState = $state(initialGameState());
 
     public move(board: number, pos: number): void {
-        // console.log(`Move: board=${board}, pos=${pos}`);
+        console.log(`Move: board=${board}, pos=${pos}`);
         if (this.getBoard(board)[pos] || !this.isOpenBoard(board) || this.status !== 'playing') {
             return;
         }
@@ -65,18 +65,16 @@ class GameManager {
 
         const nextBoardResults = checkSubBoards(nextBoards);
         const nextResult = computeResult(nextBoardResults.map(([_, player]) => player));
+        const isDraw = nextBoardResults.every(([status, _]) => status != 'playing');
 
         this.state = {
             boards: nextBoards,
             currentPlayer: this.state.currentPlayer === 'X' ? 'O' : 'X',
             lastMove: pos,
-            result: nextResult,
+            result: isDraw ? ['draw', null] : nextResult,
             boardResults: nextBoardResults,
             openBoards: computeOpenBoards(nextBoardResults, pos)
         }
-
-        // console.log("state updated");
-        // console.log($state.snapshot(this.state));
     }
 
     public resetGame(): void {
