@@ -10,7 +10,11 @@
             It's a draw :(
         {/if}
     </span>
-    <span>Player <strong>{gameManager.currentPlayer}</strong>'s turn</span>
+    <span style="font-size: 1.5em;">
+        Player <strong style:color={gameManager.currentPlayer === 'X' ? '#2196F3' : '#F44336'}>
+            {gameManager.currentPlayer}
+        </strong>'s turn
+    </span>
     <button onclick={() => gameManager.resetGame()}>
         Reset
     </button>
@@ -23,10 +27,6 @@
         align-items: center;
         gap: 10px;
         margin-top: 20px;
-    }
-    
-    span {
-        font-size: large;
     }
 
     button {

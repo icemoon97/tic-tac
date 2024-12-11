@@ -98,8 +98,8 @@
 
     .square:hover:not([disabled]) {
         background: #cbcbcb;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transform: translate(-1px, -2px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     }
 
     .square[disabled] {

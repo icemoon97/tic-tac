@@ -64,14 +64,20 @@ class GameManager {
         nextBoards[board][pos] = this.state.currentPlayer;
 
         const nextBoardResults = checkSubBoards(nextBoards);
-        const nextResult = computeResult(nextBoardResults.map(([_, player]) => player));
-        const isDraw = nextBoardResults.every(([status, _]) => status != 'playing');
+        let nextResult = computeResult(nextBoardResults.map(([_, player]) => player));
+        if (nextResult[0] !== 'won') {
+            // computeResult doesn't work if boards are drawn
+            const isDraw = nextBoardResults.every(([status, _]) => status != 'playing');
+            if (isDraw) {
+                nextResult = ['draw', null];
+            }
+        }
 
         this.state = {
             boards: nextBoards,
             currentPlayer: this.state.currentPlayer === 'X' ? 'O' : 'X',
             lastMove: pos,
-            result: isDraw ? ['draw', null] : nextResult,
+            result: nextResult,
             boardResults: nextBoardResults,
             openBoards: computeOpenBoards(nextBoardResults, pos)
         }
