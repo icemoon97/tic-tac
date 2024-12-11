@@ -4,9 +4,9 @@
 
 <div class="controls">
     <span style="font-size: 2em;">
-        {#if gameManager.gameStatus === 'won'}
+        {#if gameManager.status === 'won'}
             Winner is {gameManager.winner}!!
-        {:else if gameManager.gameStatus === 'draw'}
+        {:else if gameManager.status === 'draw'}
             It's a draw :(
         {/if}
     </span>
@@ -22,6 +22,7 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
+        margin-top: 20px;
     }
     
     span {

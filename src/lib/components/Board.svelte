@@ -7,11 +7,9 @@
     {#each gameManager.boards as subBoard, i}
         <SubBoard
             board={subBoard}
-            gameResult={gameManager.getBoardResult(i)}
-            onSquareClick={(pos) => {
-                console.log(`move: ${i}, ${pos}`);
-                gameManager.move(i, pos);
-            }}
+            isOpen={gameManager.isOpenBoard(i)}
+            boardResult={gameManager.getBoardResult(i)}
+            onSquareClick={pos => gameManager.move(i, pos)}
         />
     {/each}
 </div>

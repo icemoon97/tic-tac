@@ -1,78 +1,86 @@
 import type { Board, GameResult, GameState, GameStatus, Player } from './types';
 
+const BOARD_SIZE = 3 * 3;
 const WINNING_COMBINATIONS = [
     [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
     [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
     [0, 4, 8], [2, 4, 6]             // Diagonals
 ];
 
-// const checkWinner = (board: Board): Player | null => {
-//     const squares = countWinningSquares(board);
-//     if (squares.length) {
-//         return board[squares[0]];
-//     }
-//     return null;
-// };
+const computeResult = (board: Board): GameResult => {
+    // check for win
+    for (const [a, b, c] of WINNING_COMBINATIONS) {
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+            return ['won', board[a] as Player];
+        }
+    }
+    // check for draw
+    if (board.every(cell => cell !== null)) {
+        return ['draw', null];
+    }
+    return ['playing', null];
+}
 
-// const countWinningSquares = (board: Board): number[] => {
-//     for (const [a, b, c] of WINNING_COMBINATIONS) {
-//         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-//             return [a, b, c];
-//         }
-//     }
-//     return [];
-// }
+const checkSubBoards = (boards: Board[]): GameResult[] => {
+    return boards.map(board => computeResult(board));
+}
 
-// const checkDraw = (board: Board): boolean => {
-//     return board.every(cell => cell !== null);
-// };
+const computeOpenBoards = (boardResults: GameResult[], lastMove: number | null): number[] => {
+    if (lastMove == null) {
+        return [...Array(BOARD_SIZE).keys()];
+    }
+    
+    const [targetBoardState, _] = boardResults[lastMove];
+    if (targetBoardState !== 'playing') {
+        return [...Array(BOARD_SIZE).keys()];
+    }
+    
+    return [lastMove];
+}
 
 const initialGameState = (): GameState => {
+    const initialBoards = Array(BOARD_SIZE).fill(Array(BOARD_SIZE).fill(null));
+    const initialBoardResults = checkSubBoards(initialBoards);
     return {
-        boards: Array(9).fill(Array(9).fill(null)),
+        boards: initialBoards,
         currentPlayer: 'X',
-        result: ['playing', null]
-        // winner: null,
-        // gameStatus: 'playing'
-    };
-  }
+        lastMove: null,
+        result: ['playing', null],
+        boardResults: initialBoardResults,
+        openBoards: computeOpenBoards(initialBoardResults, null)
+    }
+}
 
 class GameManager {
     private state: GameState = $state(initialGameState());
-    private boardResults = $derived(this.checkSubBoards(this.state.boards));
-    // public winningSquares: number[] = $derived(countWinningSquares(this.state.board));
 
     public move(board: number, pos: number): void {
-        if (this.getBoard(board)[pos] || this.status !== 'playing') {
+        // console.log(`Move: board=${board}, pos=${pos}`);
+        if (this.getBoard(board)[pos] || !this.isOpenBoard(board) || this.status !== 'playing') {
             return;
         }
 
-        this.getBoard(board)[pos] = this.state.currentPlayer;
+        const nextBoards = this.state.boards.map(b => [...b]);
+        nextBoards[board][pos] = this.state.currentPlayer;
 
-        // check win states of sub boards
-        // check win state of overall board
-        // check draw (all sub boards resolved)
+        const nextBoardResults = checkSubBoards(nextBoards);
+        const nextResult = computeResult(nextBoardResults.map(([_, player]) => player));
 
-        // const boardResults = this.checkSubBoards();
+        this.state = {
+            boards: nextBoards,
+            currentPlayer: this.state.currentPlayer === 'X' ? 'O' : 'X',
+            lastMove: pos,
+            result: nextResult,
+            boardResults: nextBoardResults,
+            openBoards: computeOpenBoards(nextBoardResults, pos)
+        }
 
-
-        this.state.currentPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
+        // console.log("state updated");
+        // console.log($state.snapshot(this.state));
     }
 
-    private checkSubBoards(boards: Board[]): GameResult[] {
-        return boards.map(board => {
-            // check for win
-            for (const [a, b, c] of WINNING_COMBINATIONS) {
-                if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-                    return ['won', board[a] as Player];
-                }
-            }
-            // check for draw
-            if (board.every(cell => cell !== null)) {
-                return ['draw', null];
-            }
-            return ['playing', null];
-        })
+    public resetGame(): void {
+        this.state = initialGameState();
     }
 
     public getBoard(i: number): Board {
@@ -80,7 +88,11 @@ class GameManager {
     }
 
     public getBoardResult(i: number): GameResult {
-        return this.boardResults[i];
+        return this.state.boardResults[i];
+    }
+
+    public isOpenBoard(i: number): boolean {
+        return this.state.openBoards.includes(i);
     }
 
     get boards(): Board[] {
@@ -99,33 +111,6 @@ class GameManager {
     get status(): GameStatus {
         const [status, _] = this.state.result;
         return status;
-    }
-
-    // public move(pos: number): void {
-    //     if (this.state.board[pos] || this.state.gameStatus !== 'playing') {
-    //         return;
-    //     }
-
-    //     const nextBoard = [...this.state.board];
-    //     nextBoard[pos] = this.state.currentPlayer;
-    //     this.state.board = nextBoard;
-
-    //     const winner = checkWinner(this.state.board);
-    //     const isDraw = checkDraw(this.state.board);
-
-    //     if (winner) {
-    //         this.state.winner = winner;
-    //         this.state.gameStatus = 'won';
-    //     } else if (isDraw) {
-    //         this.state.gameStatus = 'draw';
-    //     } else {
-    //         // Switch players
-    //         this.state.currentPlayer = this.state.currentPlayer === 'X' ? 'O' : 'X';
-    //     }
-    // }
-
-    public resetGame(): void {
-        this.state = initialGameState();
     }
 }
 

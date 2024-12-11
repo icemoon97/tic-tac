@@ -4,13 +4,15 @@
 
     interface Props {
         board: Board;
-        gameResult: GameResult;
+        isOpen: boolean;
+        boardResult: GameResult;
         onSquareClick: (position: number) => void;
     }
 
     let { 
         board,
-        gameResult,
+        isOpen,
+        boardResult,
         onSquareClick
     }: Props = $props();
 </script>
@@ -19,7 +21,8 @@
     {#each board as value, i}
         <BoardSquare
             {value}
-            {gameResult}
+            {isOpen}
+            {boardResult}
             onSquareClick={() => onSquareClick(i)}
         />
     {/each}
